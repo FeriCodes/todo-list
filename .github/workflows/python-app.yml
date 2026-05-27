@@ -20,5 +20,5 @@ jobs:
 
       - name: Check for Python syntax errors
         run: |
-          # پایتون کدها را کامپایل ریز می‌کند تا مطمئن شود غلط املایی یا پرانتز باز نداری
+
           python -m compileall .
