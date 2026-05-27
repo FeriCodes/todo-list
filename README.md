@@ -21,5 +21,5 @@ I chose JSON for data storage because it keeps the data simple, human-readable, 
 Right now, the main menu is ready. You can run it using:
 
 ```bash
-python main.py
+python tracker.py
 ```

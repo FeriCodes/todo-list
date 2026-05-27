@@ -13,6 +13,26 @@ def main_menu():
     print("6-Exit")
 
 
+def load_file():
+    """this is for read the "tasks.json" file and if the file dosen't exsist then return an empty list for prevent the an Error."""
+    if not os.path.exists("tasks.json"):
+        return []
+
+    try:
+        with open("tasks.json", "r", encoding="utf-8") as file:
+            return json.load(file)
+    except json.JSONDecodeError:
+
+        return []
+
+
+def write_file(tasks_list):
+    """this is can write the file when user give the program an input."""
+
+    with open("tasks.json", "w", encoding="utf-8") as file:
+        json.dump(tasks_list, file, indent=4, ensure_ascii=False)
+
+
 def get_choice():
     try:
         user = int(input("\nChoose a number from the menu: "))
@@ -20,6 +40,34 @@ def get_choice():
     except ValueError:
         print("❌ Invalid input! Please enter a number.")
         return None
+
+
+def select_task():
+
+    tasks_list = load_file()
+
+    if not tasks_list:
+        print("no tasks found. add some tasks.")
+        return None, None
+
+    # this is for choose the every task you want.
+    print("\n--- Your Tasks---")
+    for index, item in enumerate(tasks_list):
+        status = "✅" if item['done_today'] else "❌"
+        print(f"{index + 1}. Task: {item['task']} | Streak: {item['streak']}")
+
+    try:
+        task_number = int(
+            input("Enter the number of the task you completed: "))
+
+        if task_number <= 0 or task_number > len(tasks_list):
+            print("❌ Error: Task number out of range!")
+            return None, None
+        index = task_number - 1
+        return tasks_list, index
+
+    except ValueError:
+        print("❌ Error: please enter a number")
 
 
 def add_task():
@@ -31,15 +79,15 @@ def add_task():
         activity_name = input("Enter the task or habit you want to add: ")
 
         if activity_name.isdigit():
-            print("please enter a task instead the numbers.")
+            print("❌ please enter a task instead the numbers.")
             continue
 
-        if os.path.exists("tasks.json"):
+        if not activity_name:
+            print("❌ Task name cannot be empty.")
+            continue
 
-            with open("tasks.json", "r", encoding="utf-8") as file:
-                tasks_list = json.load(file)
-        else:
-            tasks_list = []
+        # open the file even if dosen't exsist this can make a new file name "tasks.json"
+        tasks_list = load_file()
 
         new_task = {
             "task": activity_name,
@@ -49,9 +97,8 @@ def add_task():
 
         tasks_list.append(new_task)
 
-        # if the file dosen't exsits this can create the file
-        with open("tasks.json", "w", encoding="utf-8") as file:
-            json.dump(tasks_list, file, indent=4)
+        # write down on the file by the users input
+        write_file(tasks_list)
 
         print(f"✅ '{activity_name}' added successfully!")
 
@@ -64,51 +111,36 @@ def add_task():
             break
         else:
             print("❌ Invalid input! Please enter 'y' or 'n'.")
+            break
 
 
 def mark_task_done():
     """
-    2-Marks a task as completed. Visually indicates completion (e.g., with a green mark) or non-completion (e.g., with a red mark) if the task was not done.
+    2-Marks a task as completed.
     """
-    with open("tasks.json", "r", encoding="utf-8") as file:
-        tasks_list = json.load(file)
+    tasks_list, index = select_task()
 
-    # this is for choose the every task you want.
-    for index, item in enumerate(tasks_list):
-        print(f"{index + 1}. Task: {item['task']} | Streak: {item['streak']}")
+    if tasks_list is None or index is None:
+        return
 
-    try:
-        task_number = int(
-            input("Enter the number of the task you completed: "))
-        if task_number <= 0:
-            print("❌ Error: The number must be 1 or higher!")
-            return
+    selected_task = tasks_list[index]
 
-        index = task_number - 1
+    user_done = input(
+        f"are you done the {selected_task["task"]} task? (y/n): ").strip().lower()
 
-        if index >= len(tasks_list):
-            print("❌ Error: Task number out of range!")
-            return
+    if user_done == "y":
+        selected_task["streak"] += 1
+        selected_task["done_today"] = True
+        print("🔥 Great job! Streak updated.")
+    elif user_done == "n":
+        selected_task["streak"] = 0
+        selected_task["done_today"] = False
+        print("❌ Streak reset. Consistency is key!")
+    else:
+        print("❌ Invalid input!")
+        return
 
-        selected_task = tasks_list[index]
-        user_done = input(
-            f"are you done the {selected_task["task"]} task? (y/n): ")
-
-        if user_done == "y":
-            selected_task["streak"] += 1
-            selected_task["done_today"] = True
-            print("🔥 Great job! Streak updated.")
-
-        elif user_done == "n":
-            selected_task["streak"] = 0
-            selected_task["done_today"] = False
-            print("❌ Streak reset. Consistency is key!")
-
-        with open("tasks.json", "w", encoding="utf-8") as file:
-            json.dump(tasks_list, file, indent=4)
-
-    except ValueError:
-        print("❌ Error: please enter a number")
+    write_file(tasks_list)
 
 
 def view_calendar():
