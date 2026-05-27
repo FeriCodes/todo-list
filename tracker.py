@@ -126,7 +126,7 @@ def mark_task_done():
     selected_task = tasks_list[index]
 
     user_done = input(
-        f"are you done the {selected_task["task"]} task? (y/n): ").strip().lower()
+        f"are you done the {selected_task['task']} task? (y/n): ").strip().lower()
 
     if user_done == "y":
         selected_task["streak"] += 1
