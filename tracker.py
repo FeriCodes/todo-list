@@ -1,10 +1,12 @@
 import json
 import sys
 import os
+from datetime import datetime
 
 
-def main_menu():
-    print("\n----------Main Menu----------\n")
+def main_menu(formatted_now):
+    print("----------Main Menu----------\n")
+    print(f"📅 Current Time: {formatted_now}\n")
     print("1-Add task")
     print("2-Mark task done")
     print("3-View calendar")
@@ -43,13 +45,13 @@ def get_choice():
         return None
 
 
-def select_task(tasks_list):
+def select_task(tasks_list, action_message):
 
     if show_tasks(tasks_list) is False:
         return None
     try:
         task_number = int(
-            input("Enter the number of the task you completed: "))
+            input(f"\nEnter the number of the task you want to {action_message}: "))
 
         if task_number <= 0 or task_number > len(tasks_list):
             print("❌ Error: Task number out of range!")
@@ -60,6 +62,28 @@ def select_task(tasks_list):
         print("❌ Error: please enter a number")
 
 
+def updated_tasks_by_time(tasks_list):
+    now = datetime.now()
+
+    for item in tasks_list:
+
+        if item["last_updated"] == "":
+            continue
+        last_time = datetime.strptime(item["last_updated"] , "%Y-%m-%d %H:%M:%S")
+
+        days_passed = (now.date() - last_time.date()).days
+
+        if days_passed == 0:
+            continue
+        elif days_passed == 1:
+            item["done_today"] = False
+        elif days_passed >= 2:
+            item["done_today"] = False
+            item["streak"] = 0
+
+    write_file(tasks_list)
+
+
 def add_task():
     """
     1-Adds tasks to help build streaks and habits. tasks are also saved to a json file.
@@ -67,7 +91,7 @@ def add_task():
     while True:
        
 
-        activity_name = input("Enter the task or habit you want to add: ")
+        activity_name = input("\nEnter the task or habit you want to add: ")
 
         if activity_name.isdigit():
             print("❌ please enter a task instead the numbers.")
@@ -83,7 +107,9 @@ def add_task():
         new_task = {
             "task": activity_name,
             "streak": 0,
-            "done_today": False
+            "done_today": False,
+            "last_updated": "",
+            "longest_streak": 0
         }
 
         tasks_list.append(new_task)
@@ -93,8 +119,7 @@ def add_task():
 
         print(f"✅ '{activity_name}' added successfully!")
 
-        asking = input(
-            "Do you want to add another task? (y/n): ").lower().strip()
+        asking = input("\nDo you want to add another task? (y/n): ").lower().strip()
 
         if asking == "y":
             continue
@@ -109,28 +134,24 @@ def mark_task_done(tasks_list):
     """
     2-Marks a task as completed.
     """
-    index = select_task(tasks_list)
+    index = select_task(tasks_list, "mark as done")
 
     if tasks_list is None or index is None:
         return
 
     selected_task = tasks_list[index]
 
-    user_done = input(
-        f"are you done the {selected_task['task']} task? (y/n): ").strip().lower()
+    selected_task["streak"] += 1
+    selected_task["done_today"] = True
+    selected_task["last_updated"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    if user_done == "y":
-        selected_task["streak"] += 1
-        selected_task["done_today"] = True
-        print("🔥 Great job! Streak updated.")
-    elif user_done == "n":
-        selected_task["streak"] = 0
-        selected_task["done_today"] = False
-        print("❌ Streak reset. Consistency is key!")
-    else:
-        print("❌ Invalid input!")
-        return
+    # this can count your longest streak!
+    if selected_task["streak"] > selected_task["longest_streak"]:
+        selected_task["longest_streak"] = selected_task["streak"]
+        print(f"🏆 New Personal Record for '{selected_task['task']}'!")
 
+    print(f"🔥 Great job! '{selected_task['task']}' marked as done. Streak updated.")
+    
     write_file(tasks_list)
 
 
@@ -145,7 +166,7 @@ def remove_task(tasks_list):
     """
     4-Remove the selected task from the program.
     """
-    index = select_task(tasks_list)
+    index = select_task(tasks_list, "remove task")
     if index is None:
         return 
     
@@ -160,12 +181,33 @@ def remove_task(tasks_list):
         print("❌Removal canceled.")
 
 
-def view_streaks():
+def view_streaks(tasks_list):
     """
     5-Displays all tracked streaks for the user's tasks.
     """
-    pass 
+    if not tasks_list:
+        print("❌ No tasks found. Add some tasks first.")
+        return 
 
+    print("\n🔥 --- Your Coding & Habit Streaks --- 🔥\n")
+
+    for item in tasks_list:
+        streak_count = item["streak"]
+        longest = item["longest_streak"]
+
+        if streak_count == 0:
+            medal = "⚪"
+        elif streak_count < 5:
+            medal = "🌱"
+        elif streak_count < 15:
+            medal = "🔥"
+        else:
+            medal = "👑"
+            
+        print(f"{medal} Task: {item['task']} | Current: {streak_count} days | 🏆 Best Record: {longest} days")
+        
+    print("\nKeep pushing forward! Consistency is the key to mastery. 🚀")
+        
 
 def show_tasks(tasks_list):
     """
@@ -179,15 +221,20 @@ def show_tasks(tasks_list):
     print("\n--- Your Tasks---")
     for index, item in enumerate(tasks_list):
         status = "✅" if item['done_today'] else "❌"
-        print(f"{index + 1}. Task: {item['task']} | Streak: {item['streak']} | status: {status}")
+        print(f"{index + 1}. Task: {item['task']} | Streak: {item['streak']} | status: {status} | Longest Streak: {item['longest_streak']}")
 
     return True
 
 def main():
     while True:
         current_tasks = load_file()
+        # this is origin time in our todolist.
+        updated_tasks_by_time(current_tasks)
 
-        main_menu()
+        now = datetime.now()
+        formatted_now = now.strftime("%Y-%m-%d %H:%M:%S")
+        
+        main_menu(formatted_now)
         choice = get_choice()
         if choice == 1:
             add_task()
@@ -198,7 +245,7 @@ def main():
         elif choice == 4:
             remove_task(current_tasks)
         elif choice == 5:
-            view_streaks()
+            view_streaks(current_tasks)
         elif choice == 6:
             show_tasks(current_tasks)
         elif choice == 7:
