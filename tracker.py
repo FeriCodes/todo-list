@@ -17,7 +17,9 @@ def main_menu(formatted_now):
 
 
 def load_file():
-    """this is for read the "tasks.json" file and if the file dosen't exsist then return an empty list for prevent the an Error."""
+    """
+    this is for read the "tasks.json" file and if the file dosen't exsist then return an empty list for prevent the an Error.
+    """
     if not os.path.exists("tasks.json"):
         return []
 
@@ -30,7 +32,9 @@ def load_file():
 
 
 def write_file(tasks_list):
-    """this is can write the file when user give the program an input."""
+    """
+    this is can write the file when user give the program an input.
+    """
 
     with open("tasks.json", "w", encoding="utf-8") as file:
         json.dump(tasks_list, file, indent=4, ensure_ascii=False)
@@ -46,6 +50,9 @@ def get_choice():
 
 
 def select_task(tasks_list, action_message):
+    """
+    selecting one of your task of your list for remove or tap Done.
+    """
 
     if show_tasks(tasks_list) is False:
         return None
@@ -63,6 +70,10 @@ def select_task(tasks_list, action_message):
 
 
 def updated_tasks_by_time(tasks_list):
+    """
+    adding a time for program and remmeber your ckeck and done your tasks or not
+    """
+
     now = datetime.now()
 
     for item in tasks_list:
@@ -84,6 +95,19 @@ def updated_tasks_by_time(tasks_list):
     write_file(tasks_list)
 
 
+def create_task_structure(activity_name):
+    """
+    Creates and returns the default dictionary structure for a new task.
+    """
+    return {
+            "task": activity_name,
+            "streak": 0,
+            "done_today": False,
+            "last_updated": "",
+            "longest_streak": 0
+        }
+
+
 def add_task(tasks_list):
     """
     1-Adds tasks to help build streaks and habits. tasks are also saved to a json file.
@@ -101,19 +125,11 @@ def add_task(tasks_list):
             print("❌ Task name cannot be empty.")
             continue
 
-        new_task = {
-            "task": activity_name,
-            "streak": 0,
-            "done_today": False,
-            "last_updated": "",
-            "longest_streak": 0
-        }
-
+        new_task = create_task_structure(activity_name)
         tasks_list.append(new_task)
 
         # write down on the file by the users input
         write_file(tasks_list)
-
         print(f"✅ '{activity_name}' added successfully!")
 
         asking = input("\nDo you want to add another task? (y/n): ").lower().strip()
@@ -135,9 +151,14 @@ def mark_task_done(tasks_list):
 
     if tasks_list is None or index is None:
         return
-
+    
     selected_task = tasks_list[index]
 
+    if selected_task["done_today"]:
+        print("❌ Already completed today!")
+        return 
+    
+    selected_task = tasks_list[index]
     selected_task["streak"] += 1
     selected_task["done_today"] = True
     selected_task["last_updated"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
