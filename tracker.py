@@ -88,8 +88,9 @@ def updated_tasks_by_time(tasks_list):
             continue
         elif days_passed == 1:
             item["done_today"] = False
-            if days_passed >= 2:
-                item["streak"] = 0
+        elif days_passed >= 2:
+            item["done_today"] = False
+            item["streak"] = 0
 
     write_file(tasks_list)
 
@@ -243,16 +244,19 @@ def show_tasks(tasks_list):
     return True
 
 def main():
+
+    current_tasks = load_file()
+    # this is origin time in our todolist.
+    updated_tasks_by_time(current_tasks)
+
     while True:
-        current_tasks = load_file()
-        # this is origin time in our todolist.
-        updated_tasks_by_time(current_tasks)
 
         now = datetime.now()
         formatted_now = now.strftime("%Y-%m-%d %H:%M:%S")
         
         main_menu(formatted_now)
         choice = get_choice()
+        
         if choice == 1:
             add_task(current_tasks)
         elif choice == 2:
