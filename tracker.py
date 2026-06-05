@@ -1,3 +1,10 @@
+"""
+Task and Habit Tracker Application.
+
+This module provides a command-line interface for managing daily tasks,
+tracking completion streaks, and persistence using a JSON database.
+"""
+
 import json
 import sys
 import os
@@ -5,6 +12,9 @@ from datetime import datetime
 
 
 def main_menu(formatted_now):
+    """
+    Display the main menu options and the current timestamp.
+    """
     print("----------Main Menu----------\n")
     print(f"📅 Current Time: {formatted_now}\n")
     print("1-Add task")
@@ -18,7 +28,8 @@ def main_menu(formatted_now):
 
 def load_file():
     """
-    this is for read the "tasks.json" file and if the file dosen't exsist then return an empty list for prevent the an Error.
+    this is for read the "tasks.json" file
+    if the file dosen't exsist then return an empty list for prevent the an Error.
     """
     if not os.path.exists("tasks.json"):
         return []
@@ -41,6 +52,12 @@ def write_file(tasks_list):
 
 
 def get_choice():
+    """
+    Get and validate the user's menu selection.
+
+    Returns:
+        int: The selected option number if valid, None otherwise.
+    """
     try:
         user = int(input("\nChoose a number from the menu: "))
         return user
@@ -58,15 +75,16 @@ def select_task(tasks_list, action_message):
         return None
     try:
         task_number = int(
-            input(f"\nEnter the number of the task you want to {action_message}: "))
+            input(f"\nEnter the number of the task you want to {action_message}: ")
+        )
 
         if task_number <= 0 or task_number > len(tasks_list):
             print("❌ Error: Task number out of range!")
             return None
         return task_number - 1
-    
     except ValueError:
         print("❌ Error: please enter a number")
+        return None
 
 
 def updated_tasks_by_time(tasks_list):
@@ -80,13 +98,13 @@ def updated_tasks_by_time(tasks_list):
 
         if item["last_updated"] == "":
             continue
-        last_time = datetime.strptime(item["last_updated"] , "%Y-%m-%d %H:%M:%S")
+        last_time = datetime.strptime(item["last_updated"], "%Y-%m-%d %H:%M:%S")
 
         days_passed = (now.date() - last_time.date()).days
 
         if days_passed == 0:
             continue
-        elif days_passed == 1:
+        if days_passed == 1:
             item["done_today"] = False
         elif days_passed >= 2:
             item["done_today"] = False
@@ -100,12 +118,12 @@ def create_task_structure(activity_name):
     Creates and returns the default dictionary structure for a new task.
     """
     return {
-            "task": activity_name,
-            "streak": 0,
-            "done_today": False,
-            "last_updated": "",
-            "longest_streak": 0
-        }
+        "task": activity_name,
+        "streak": 0,
+        "done_today": False,
+        "last_updated": "",
+        "longest_streak": 0,
+    }
 
 
 def add_task(tasks_list):
@@ -113,7 +131,6 @@ def add_task(tasks_list):
     1-Adds tasks to help build streaks and habits. tasks are also saved to a json file.
     """
     while True:
-       
 
         activity_name = input("\nEnter the task or habit you want to add: ")
 
@@ -136,11 +153,10 @@ def add_task(tasks_list):
 
         if asking == "y":
             continue
-        elif asking == "n":
+        if asking == "n":
             break
-        else:
-            print("❌ Invalid input! Please enter 'y' or 'n'.")
-            break
+        print("❌ Invalid input! Please enter 'y' or 'n'.")
+        break
 
 
 def mark_task_done(tasks_list):
@@ -151,13 +167,11 @@ def mark_task_done(tasks_list):
 
     if index is None:
         return
-    
     selected_task = tasks_list[index]
 
     if selected_task["done_today"]:
         print("❌ Already completed today!")
-        return 
-    
+        return
     selected_task = tasks_list[index]
     selected_task["streak"] += 1
     selected_task["done_today"] = True
@@ -169,7 +183,6 @@ def mark_task_done(tasks_list):
         print(f"🏆 New Personal Record for '{selected_task['task']}'!")
 
     print(f"🔥 Great job! '{selected_task['task']}' marked as done. Streak updated.")
-    
     write_file(tasks_list)
 
 
@@ -181,10 +194,8 @@ def edit_tasks(tasks_list):
     """
     index = select_task(tasks_list, "edit")
     if index is None:
-        return 
-    
+        return
     selected_task = tasks_list[index]
-
     while True:
 
         print(f"\n--- Editing Task: \"{selected_task['task']}\" ---")
@@ -193,11 +204,11 @@ def edit_tasks(tasks_list):
         print("3. Reset longest streak (to 0)")
         print("4. Toggle done_today (True ↔ False)")
         print("5. Back to main menu")
-        
         choice = get_choice()
-        
         if choice == 1:
-            edit_task_name = input("enter your new name for edit the choosen task name?: ").strip()
+            edit_task_name = input(
+                "enter your new name for edit the choosen task name?: "
+            ).strip()
             selected_task["task"] = edit_task_name
             print("✅ Task name updated successfully!")
 
@@ -206,14 +217,17 @@ def edit_tasks(tasks_list):
             selected_task["streak"] = edit_current_streak
             print("✅ This streak number updated successfully!")
 
-        
         elif choice == 3:
-            edit_longest_streak = int(input("enter your longest streak for this task: "))
+            edit_longest_streak = int(
+                input("enter your longest streak for this task: ")
+            )
             selected_task["longest_streak"] = edit_longest_streak
             print("✅ This longest streak updated successfully!")
 
         elif choice == 4:
-            edit_done_today = input("Have you done this task today? (y/n): ").strip().lower()
+            edit_done_today = (
+                input("Have you done this task today? (y/n): ").strip().lower()
+            )
             if edit_done_today == "y":
                 selected_task["done_today"] = True
                 print("✅ Status updated to completed (True).")
@@ -225,16 +239,17 @@ def edit_tasks(tasks_list):
                 print("❌ Invalid input! Please enter 'y' or 'n'.")
 
         elif choice == 5:
-            confirm = input("Are you sure you want to back to the main menu? (y/n): ").strip().lower()
+            confirm = (
+                input("Are you sure you want to back to the main menu? (y/n): ")
+                .strip()
+                .lower()
+            )
             if confirm == "y":
                 print("Returning to main menu...")
                 break
-            else:
-                continue
-                
+            continue
         else:
             print("❌ Option not found. Please try again.")
-
         write_file(tasks_list)
 
 
@@ -244,14 +259,14 @@ def remove_task(tasks_list):
     """
     index = select_task(tasks_list, "remove task")
     if index is None:
-        return 
-    
+        return
+
     selected_task = tasks_list[index]
 
     confirm = input(f"Are you sure you want to remove {selected_task['task']}?: (y/n)")
     if confirm == "y":
         tasks_list.pop(index)
-        write_file(tasks_list) 
+        write_file(tasks_list)
         print("✅Task removed successfully!")
     else:
         print("❌Removal canceled.")
@@ -263,7 +278,7 @@ def view_streaks(tasks_list):
     """
     if not tasks_list:
         print("❌ No tasks found. Add some tasks first.")
-        return 
+        return
 
     print("\n🔥 --- Your Coding & Habit Streaks --- 🔥\n")
 
@@ -279,11 +294,16 @@ def view_streaks(tasks_list):
             medal = "🔥"
         else:
             medal = "👑"
-            
-        print(f"{medal} Task: {item['task']} | Current: {streak_count} days | 🏆 Best Record: {longest} days")
-        
+
+        task_summary = (
+            f"{medal} Task: {item['task']} | "
+            f"Current: {streak_count} days | "
+            f"🏆 Best Record: {longest} days"
+        )
+        print(task_summary)
+
     print("\nKeep pushing forward! Consistency is the key to mastery. 🚀")
-        
+
 
 def show_tasks(tasks_list):
     """
@@ -292,16 +312,25 @@ def show_tasks(tasks_list):
     if not tasks_list:
         print("no tasks found. add some tasks.")
         return False
-    
+
     # this is for choose the every task you want.
     print("\n--- Your Tasks---")
     for index, item in enumerate(tasks_list):
-        status = "✅" if item['done_today'] else "❌"
-        print(f"{index + 1}. Task: {item['task']} | Streak: {item['streak']} | status: {status} | Longest Streak: {item['longest_streak']}")
+        status = "✅" if item["done_today"] else "❌"
+        print(
+            f"{index + 1}. Task: {item['task']} | "
+            f"Streak: {item['streak']} | "
+            f"status: {status} | "
+            f"Longest Streak: {item['longest_streak']}"
+        )
 
     return True
 
+
 def main():
+    """
+    Run the main application loop, handling database initialization and menu routing.
+    """
 
     current_tasks = load_file()
     # this is origin time in our todolist.
@@ -311,10 +340,10 @@ def main():
 
         now = datetime.now()
         formatted_now = now.strftime("%Y-%m-%d %H:%M:%S")
-        
+
         main_menu(formatted_now)
         choice = get_choice()
-        
+
         if choice == 1:
             add_task(current_tasks)
         elif choice == 2:
@@ -334,6 +363,7 @@ def main():
             continue
         else:
             print("Option not found. Please try again.")
+
 
 if __name__ == "__main__":
     main()
