@@ -1,4 +1,4 @@
-from src.database import create_task_structure, write_file
+from src.database import Task
 from src.ui import show_tasks
 from datetime import datetime
 
@@ -62,8 +62,6 @@ def updated_tasks_by_time(tasks_list):
             item["done_today"] = False
             item["streak"] = 0
 
-    write_file(tasks_list)
-
 
 def add_task(tasks_list):
     """
@@ -81,11 +79,10 @@ def add_task(tasks_list):
             print("❌ Task name cannot be empty.")
             continue
 
-        new_task = create_task_structure(activity_name)
+        task_obj = Task(activity_name)
+        new_task = task_obj.to_dict()
         tasks_list.append(new_task)
 
-        # write down on the file by the users input
-        write_file(tasks_list)
         print(f"✅ '{activity_name}' added successfully!")
 
         asking = input("\nDo you want to add another task? (y/n): ").lower().strip()
@@ -122,7 +119,6 @@ def mark_task_done(tasks_list):
         print(f"🏆 New Personal Record for '{selected_task['task']}'!")
 
     print(f"🔥 Great job! '{selected_task['task']}' marked as done. Streak updated.")
-    write_file(tasks_list)
 
 
 def edit_tasks(tasks_list):
@@ -189,7 +185,6 @@ def edit_tasks(tasks_list):
             continue
         else:
             print("❌ Option not found. Please try again.")
-        write_file(tasks_list)
 
 
 def remove_task(tasks_list):
@@ -205,7 +200,6 @@ def remove_task(tasks_list):
     confirm = input(f"Are you sure you want to remove {selected_task['task']}?: (y/n)")
     if confirm == "y":
         tasks_list.pop(index)
-        write_file(tasks_list)
         print("✅Task removed successfully!")
     else:
         print("❌Removal canceled.")

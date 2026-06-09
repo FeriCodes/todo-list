@@ -1,5 +1,5 @@
 from src.ui import main_menu, view_streaks, show_tasks
-from src.database import load_file
+from src.database import Database
 from src.manager import (
     get_choice,
     add_task,
@@ -16,8 +16,11 @@ def main():
     """
     Run the main application loop, handling database initialization and menu routing.
     """
+    db = Database("tasks.json")
+    load_file = db.load()
 
-    current_tasks = load_file()
+    current_tasks = load_file
+
     # this is origin time in our todolist.
     updated_tasks_by_time(current_tasks)
 
@@ -31,12 +34,16 @@ def main():
 
         if choice == 1:
             add_task(current_tasks)
+            db.save(current_tasks)
         elif choice == 2:
             mark_task_done(current_tasks)
+            db.save(current_tasks)
         elif choice == 3:
             edit_tasks(current_tasks)
+            db.save(current_tasks)
         elif choice == 4:
             remove_task(current_tasks)
+            db.save(current_tasks)
         elif choice == 5:
             view_streaks(current_tasks)
         elif choice == 6:
