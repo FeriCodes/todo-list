@@ -1,21 +1,6 @@
 from src.database import Task
-from src.ui import show_tasks
+from src.ui import show_tasks, get_choice
 from datetime import datetime
-
-
-def get_choice():
-    """
-    Get and validate the user's menu selection.
-
-    Returns:
-        int: The selected option number if valid, None otherwise.
-    """
-    try:
-        user = int(input("\nChoose a number from the menu: "))
-        return user
-    except ValueError:
-        print("❌ Invalid input! Please enter a number.")
-        return None
 
 
 def select_task(tasks_list, action_message):

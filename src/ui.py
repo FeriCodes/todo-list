@@ -1,3 +1,6 @@
+import sys
+
+
 def main_menu(formatted_now):
     """
     Display the main menu options and the current timestamp.
@@ -11,6 +14,24 @@ def main_menu(formatted_now):
     print("5-View streaks")
     print("6-show all the tasks")
     print("7-Exit")
+
+
+def get_choice():
+    """
+    Get and validate the user's menu selection.
+
+    Returns:
+        int: The selected option number if valid, None otherwise.
+    """
+    try:
+        user = int(input("\nChoose a number from the menu: "))
+
+        if user < 1 or user > 7:
+            print("❌ Option not found. Please try again.")
+            return None
+    except ValueError:
+        print("❌ Invalid input! Please enter a number.")
+        return None
 
 
 def view_streaks(tasks_list):
@@ -66,3 +87,8 @@ def show_tasks(tasks_list):
         )
 
     return True
+
+
+def exit_program():
+    print("\ngoodbye!")
+    return sys.exit()

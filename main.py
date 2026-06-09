@@ -1,7 +1,6 @@
-from src.ui import main_menu, view_streaks, show_tasks
+from src.ui import main_menu, view_streaks, show_tasks, get_choice, exit_program
 from src.database import Database
 from src.manager import (
-    get_choice,
     add_task,
     mark_task_done,
     edit_tasks,
@@ -49,12 +48,9 @@ def main():
         elif choice == 6:
             show_tasks(current_tasks)
         elif choice == 7:
-            print("\ngoodbye!")
-            return sys.exit()
+            exit_program()
         elif choice is None:
             continue
-        else:
-            print("Option not found. Please try again.")
 
 
 if __name__ == "__main__":
