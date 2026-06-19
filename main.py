@@ -8,7 +8,6 @@ from src.manager import (
     updated_tasks_by_time,
 )
 from datetime import datetime
-import sys
 
 
 def main():
@@ -16,9 +15,8 @@ def main():
     Run the main application loop, handling database initialization and menu routing.
     """
     db = Database("tasks.json")
-    load_file = db.load()
 
-    current_tasks = load_file
+    current_tasks = db.load()
 
     # this is origin time in our todolist.
     updated_tasks_by_time(current_tasks)
