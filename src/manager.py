@@ -53,8 +53,7 @@ def add_task(tasks_list):
     1-Adds tasks to help build streaks and habits. tasks are also saved to a json file.
     """
     while True:
-
-        activity_name = input("\nEnter the task or habit you want to add: ")
+        activity_name = input("\nEnter the task or habit you want to add: ").strip()
 
         if activity_name.isdigit():
             print("❌ please enter a task instead the numbers.")
@@ -62,6 +61,11 @@ def add_task(tasks_list):
 
         if not activity_name:
             print("❌ Task name cannot be empty.")
+            continue
+
+        existing_names = [item["task"].strip().lower() for item in tasks_list]
+        if activity_name.lower() in existing_names:
+            print(f"❌ '{activity_name}' already exists in your list!")
             continue
 
         task_obj = Task(activity_name)
@@ -76,8 +80,9 @@ def add_task(tasks_list):
             continue
         if asking == "n":
             break
-        print("❌ Invalid input! Please enter 'y' or 'n'.")
-        break
+        else:
+            print("❌ Invalid input! Please enter 'y' or 'n'.")
+            continue
 
 
 def mark_task_done(tasks_list):
@@ -133,16 +138,24 @@ def edit_tasks(tasks_list):
             print("✅ Task name updated successfully!")
 
         elif choice == 2:
-            edit_current_streak = int(input("enter the new streak for this task: "))
-            selected_task["streak"] = edit_current_streak
-            print("✅ This streak number updated successfully!")
+            try:
+                edit_current_streak = int(input("enter the new streak for this task: "))
+                selected_task["streak"] = edit_current_streak
+                print("✅ This streak number updated successfully!")
+            except ValueError:
+                print("❌ Invalid input! Please enter a valid number for the streak.")
 
         elif choice == 3:
-            edit_longest_streak = int(
-                input("enter your longest streak for this task: ")
-            )
-            selected_task["longest_streak"] = edit_longest_streak
-            print("✅ This longest streak updated successfully!")
+            try:
+                edit_longest_streak = int(
+                    input("enter your longest streak for this task: ")
+                )
+                selected_task["longest_streak"] = edit_longest_streak
+                print("✅ This longest streak updated successfully!")
+            except ValueError:
+                print(
+                    "❌ Invalid input! Please enter a valid number for the longest streak."
+                )
 
         elif choice == 4:
             edit_done_today = (
@@ -164,6 +177,7 @@ def edit_tasks(tasks_list):
                 .strip()
                 .lower()
             )
+
             if confirm == "y":
                 print("Returning to main menu...")
                 break
