@@ -1,51 +1,32 @@
 from src.database import Task
-from src.ui import show_tasks, get_choice
 from datetime import datetime
 
 
-def select_task(tasks_list, action_message):
-    """
-    selecting one of your task of your list for remove or tap Done.
-    """
+class Manager:
+    def __init__(self, tasks_list):
+        self.tasks_list = tasks_list
 
-    if show_tasks(tasks_list) is False:
-        return None
-    try:
-        task_number = int(
-            input(f"\nEnter the number of the task you want to {action_message}: ")
-        )
+    def updated_tasks_by_time(self):
+        """
+        Checks the elapsed time and automatically updates task completion statuses and streaks.
+        """
+        now = datetime.now()
 
-        if task_number <= 0 or task_number > len(tasks_list):
-            print("❌ Error: Task number out of range!")
-            return None
-        return task_number - 1
-    except ValueError:
-        print("❌ Error: please enter a number")
-        return None
+        for item in self.tasks_list:
 
+            if item["last_updated"] == "":
+                continue
+            last_time = datetime.strptime(item["last_updated"], "%Y-%m-%d %H:%M:%S")
 
-def updated_tasks_by_time(tasks_list):
-    """
-    Checks the elapsed time and automatically updates task completion statuses and streaks.
-    """
+            days_passed = (now.date() - last_time.date()).days
 
-    now = datetime.now()
-
-    for item in tasks_list:
-
-        if item["last_updated"] == "":
-            continue
-        last_time = datetime.strptime(item["last_updated"], "%Y-%m-%d %H:%M:%S")
-
-        days_passed = (now.date() - last_time.date()).days
-
-        if days_passed == 0:
-            continue
-        if days_passed == 1:
-            item["done_today"] = False
-        elif days_passed >= 2:
-            item["done_today"] = False
-            item["streak"] = 0
+            if days_passed == 0:
+                continue
+            if days_passed == 1:
+                item["done_today"] = False
+            elif days_passed >= 2:
+                item["done_today"] = False
+                item["streak"] = 0
 
 
 def add_task(tasks_list):
