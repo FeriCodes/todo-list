@@ -81,53 +81,33 @@ class Manager:
             "message": "Task added successfully!",
         }
 
-    if selected_task["done_today"]:
-        print("❌ Already completed today!")
-        return
-    selected_task = tasks_list[index]
-    selected_task["streak"] += 1
-    selected_task["done_today"] = True
-    selected_task["last_updated"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    def mark_task_done(self, selected_task):
+        """
+        Marks a task as completed for today and updates its streak.
+        """
 
-    # this can count your longest streak!
-    if selected_task["streak"] > selected_task["longest_streak"]:
-        selected_task["longest_streak"] = selected_task["streak"]
-        print(f"🏆 New Personal Record for '{selected_task['task']}'!")
+        if selected_task["done_today"]:
+            return {
+                "success": False,
+                "message": "Already completed today!",
+            }
 
-    print(f"🔥 Great job! '{selected_task['task']}' marked as done. Streak updated.")
+        selected_task["streak"] += 1
+        selected_task["done_today"] = True
+        selected_task["last_updated"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        message = (
+            f"Great job! '{selected_task['task']}' marked as done. Streak updated."
+        )
 
-def edit_tasks(tasks_list):
-    """
-    3-Provides an interactive sub-menu to edit specific properties of a selected task.
-    Allows changing the name, resetting streaks, toggling completion status,
-    and automatically saves updates to the JSON database.
-    """
-    index = select_task(tasks_list, "edit")
-    if index is None:
-        return
-    selected_task = tasks_list[index]
-    while True:
+        if selected_task["streak"] > selected_task["longest_streak"]:
+            selected_task["longest_streak"] = selected_task["streak"]
+            message += f" 🏆 New personal record for '{selected_task['task']}'!"
 
-        print(f"\n--- Editing Task: \"{selected_task['task']}\" ---")
-        print("1. Change task name")
-        print("2. Reset current streak (to 0)")
-        print("3. Reset longest streak (to 0)")
-        print("4. Toggle done_today (True ↔ False)")
-        print("5. Back to main menu")
-        choice = get_choice()
-        if choice == 1:
-            edit_task_name = input(
-                "enter your new name for edit the choosen task name?: "
-            ).strip()
-            selected_task["task"] = edit_task_name
-            print("✅ Task name updated successfully!")
-
-        elif choice == 2:
-            try:
-                edit_current_streak = int(input("enter the new streak for this task: "))
-                selected_task["streak"] = edit_current_streak
-                print("✅ This streak number updated successfully!")
+        return {
+            "success": True,
+            "message": message,
+        }
             except ValueError:
                 print("❌ Invalid input! Please enter a valid number for the streak.")
 
