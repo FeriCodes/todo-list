@@ -129,6 +129,10 @@ class Manager:
                 if streak_value < 0:
                     return {"success": False, "message": "Streak cannot be negative!"}
                 selected_task["streak"] = streak_value
+
+                if selected_task["streak"] > selected_task["longest_streak"]:
+                    selected_task["longest_streak"] = selected_task["streak"]
+
             except ValueError:
                 return {"success": False, "message": "Streak must be a valid number!"}
 
@@ -149,9 +153,6 @@ class Manager:
 
         if new_done_today is not None:
             selected_task["done_today"] = bool(new_done_today)
-
-        if selected_task["streak"] > selected_task["longest_streak"]:
-            selected_task["longest_streak"] = selected_task["streak"]
 
         return {
             "success": True,
