@@ -108,63 +108,66 @@ class Manager:
             "success": True,
             "message": message,
         }
-            except ValueError:
-                print("❌ Invalid input! Please enter a valid number for the streak.")
 
-        elif choice == 3:
+    # fmt: off
+    def edit_tasks(self, selected_task, new_name, new_streak=None, new_longest_streak=None, new_done_today=None):
+    # fmt: on
+        """
+        Edits task name, streaks, and status for GUI.
+        """
+        validation = self.validate_task_name(
+            new_name, current_name=selected_task["task"]
+        )
+        if not validation["success"]:
+            return validation
+
+        selected_task["task"] = validation["perfect_name"]
+
+        if new_streak is not None:
             try:
-                edit_longest_streak = int(
-                    input("enter your longest streak for this task: ")
-                )
-                selected_task["longest_streak"] = edit_longest_streak
-                print("✅ This longest streak updated successfully!")
+                streak_value = int(new_streak)
+                if streak_value < 0:
+                    return {"success": False, "message": "Streak cannot be negative!"}
+                selected_task["streak"] = streak_value
             except ValueError:
-                print(
-                    "❌ Invalid input! Please enter a valid number for the longest streak."
-                )
+                return {"success": False, "message": "Streak must be a valid number!"}
 
-        elif choice == 4:
-            edit_done_today = (
-                input("Have you done this task today? (y/n): ").strip().lower()
-            )
-            if edit_done_today == "y":
-                selected_task["done_today"] = True
-                print("✅ Status updated to completed (True).")
+        if new_longest_streak is not None:
+            try:
+                longest_value = int(new_longest_streak)
+                if longest_value < 0:
+                    return {
+                        "success": False,
+                        "message": "Longest streak cannot be negative!",
+                    }
+                selected_task["longest_streak"] = longest_value
+            except ValueError:
+                return {
+                    "success": False,
+                    "message": "Longest streak must be a valid number!",
+                }
 
-            elif edit_done_today == "n":
-                selected_task["done_today"] = False
-                print("✅ Status updated to not completed (False).")
-            else:
-                print("❌ Invalid input! Please enter 'y' or 'n'.")
+        if new_done_today is not None:
+            selected_task["done_today"] = bool(new_done_today)
 
-        elif choice == 5:
-            confirm = (
-                input("Are you sure you want to back to the main menu? (y/n): ")
-                .strip()
-                .lower()
-            )
+        if selected_task["streak"] > selected_task["longest_streak"]:
+            selected_task["longest_streak"] = selected_task["streak"]
 
-            if confirm == "y":
-                print("Returning to main menu...")
-                break
-            continue
-        else:
-            print("❌ Option not found. Please try again.")
+        return {
+            "success": True,
+            "status": "success",
+            "message": "✅ Task properties updated successfully!",
+        }
 
-
-def remove_task(tasks_list):
-    """
-    4-Remove the selected task from the program.
-    """
-    index = select_task(tasks_list, "remove task")
-    if index is None:
-        return
-
-    selected_task = tasks_list[index]
-
-    confirm = input(f"Are you sure you want to remove {selected_task['task']}?: (y/n)")
-    if confirm == "y":
-        tasks_list.pop(index)
-        print("✅Task removed successfully!")
-    else:
-        print("❌Removal canceled.")
+    def remove_task(self, selected_task):
+        """
+        Removes a task from the list.
+        """
+        try:
+            self.tasks_list.remove(selected_task)
+            return {
+                "success": True,
+                "message": f"✅ Task '{selected_task['task']}' removed successfully!",
+            }
+        except ValueError:
+            return {"success": False, "message": "❌ Task not found in the list."}
