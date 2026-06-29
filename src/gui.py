@@ -17,6 +17,12 @@ class TodoApp:
         self.root.configure(fg_color="#1a1a1a")
         self.scroll_frame.configure(fg_color="#1a1a1a")
 
+        # handling the messages
+        self.message_label = ctk.CTkLabel(
+            self.root, text="", font=("Segoe UI", 14), text_color="#4a7c59"
+        )
+        self.message_label.pack(pady=5)
+
         self.refresh_list()
 
     def refresh_list(self):
@@ -86,6 +92,7 @@ class TodoApp:
         if result["success"]:
             self.db.save(self.manager.tasks_list)
 
+        self.show_message(result["message"])
         self.refresh_list()
 
     def remove(self, task):
@@ -94,4 +101,9 @@ class TodoApp:
         if result["success"]:
             self.db.save(self.manager.tasks_list)
 
+        self.show_message(result["message"])
         self.refresh_list()
+
+    def show_message(self, text):
+        self.message_label.configure(text=text)
+        self.root.after(2000, lambda: self.message_label.configure(text=""))
