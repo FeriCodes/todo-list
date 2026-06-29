@@ -55,8 +55,27 @@ class TodoApp:
             )
             done_btn.pack(side="right", padx=5)
 
+            remove_btn = ctk.CTkButton(
+                card,
+                text="🗑",
+                width=30,
+                height=30,
+                fg_color="#3a3a3a",
+                hover_color="#a83232",
+                command=lambda t=items: self.remove(t),
+            )
+            remove_btn.pack(side="right", padx=5)
+
     def mark_done(self, task):
         result = self.manager.mark_task_done(task)
+
+        if result["success"]:
+            self.db.save(self.manager.tasks_list)
+
+        self.refresh_list()
+
+    def remove(self, task):
+        result = self.manager.remove_task(task)
 
         if result["success"]:
             self.db.save(self.manager.tasks_list)
