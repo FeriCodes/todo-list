@@ -10,6 +10,30 @@ class TodoApp:
         self.root.geometry("550x600")
         self.root.resizable(False, False)
 
+        add_frame = ctk.CTkFrame(self.root, fg_color="transparent")
+        add_frame.pack(padx=10, pady=20, fill="x")
+
+        self.entry_box = ctk.CTkEntry(
+            add_frame,
+            placeholder_text="Add a new task...",
+            height=35,
+            corner_radius=8,
+            width=150,
+        )
+        self.add_btn = ctk.CTkButton(
+            add_frame,
+            text="+",
+            width=30,
+            height=30,
+            fg_color="#3a3a3a",
+            hover_color="#006DEA",
+            border_color="white",
+            border_width=1,
+            command=self.add,
+        )
+        self.add_btn.pack(side="right")
+        self.entry_box.pack(side="right", padx=(0, 5))
+
         # scrolling between the tasks
         self.scroll_frame = ctk.CTkScrollableFrame(self.root)
         self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
@@ -85,6 +109,17 @@ class TodoApp:
                 command=lambda t=items: self.remove(t),
             )
             remove_btn.pack(side="right", padx=5)
+
+    def add(self):
+        task_name = self.entry_box.get()
+        result = self.manager.new_task(task_name)
+
+        if result["success"]:
+            self.db.save(self.manager.tasks_list)
+            self.entry_box.delete(0, "end")
+
+        self.show_message(result["message"])
+        self.refresh_list()
 
     def mark_done(self, task):
         result = self.manager.mark_task_done(task)
