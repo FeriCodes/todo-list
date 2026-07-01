@@ -110,6 +110,17 @@ class TodoApp:
             )
             remove_btn.pack(side="right", padx=5)
 
+            edit_btn = ctk.CTkButton(
+                card,
+                text="Edit",
+                width=30,
+                height=30,
+                fg_color="#3a3a3a",
+                hover_color="#b5860d",
+                command=lambda t=items: self.open_edit_popup(t),
+            )
+            edit_btn.pack(side="right", padx=5)
+
     def add(self):
         task_name = self.entry_box.get()
         result = self.manager.new_task(task_name)
@@ -129,6 +140,29 @@ class TodoApp:
 
         self.show_message(result["message"])
         self.refresh_list()
+
+    def open_edit_popup(self, task):
+        popup = ctk.CTkToplevel(self.root)
+        popup.title("Edit Tasks")
+        popup.geometry("300x150")
+        popup.resizable(False, False)
+        popup.grab_set()  # this is for user can not close the main window
+
+        ctk.CTkLabel(popup, text="New Task Name...").pack(pady=10)
+        entry = ctk.CTkEntry(popup, width=200)
+        entry.insert(0, task["task"])  # displaying the current task name
+        entry.pack(pady=5)
+
+        def save():
+            new_name = entry.get()
+            result = self.manager.edit_tasks(task, new_name)
+            self.show_message(result["message"])
+            if result["success"]:
+                self.db.save(self.manager.tasks_list)
+                self.refresh_list()
+            popup.destroy()
+
+        ctk.CTkButton(popup, text="Save", command=save).pack(pady=10)
 
     def remove(self, task):
         result = self.manager.remove_task(task)
