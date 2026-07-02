@@ -144,7 +144,7 @@ class TodoApp:
     def open_edit_popup(self, task):
         popup = ctk.CTkToplevel(self.root)
         popup.title("Edit Tasks")
-        popup.geometry("300x320")
+        popup.geometry("300x240")
         popup.resizable(False, False)
         popup.grab_set()  # this is for user can not close the main window
 
@@ -158,11 +158,19 @@ class TodoApp:
         streak_entry.insert(0, str(task["streak"]))
         streak_entry.pack(pady=5)
 
+        ctk.CTkLabel(popup, text="New Best Streak...").pack(pady=(10, 2))
+        best_entry = ctk.CTkEntry(popup, width=200)
+        best_entry.insert(0, str(task["longest_streak"]))
+        best_entry.pack(pady=5)
+
         def save():
             new_name = name_entry.get()
             new_streak_number = streak_entry.get()
+            new_best_streak = best_entry.get()
 
-            result = self.manager.edit_tasks(task, new_name, new_streak_number)
+            result = self.manager.edit_tasks(
+                task, new_name, new_streak_number, new_best_streak
+            )
             self.show_message(result["message"])
             if result["success"]:
                 self.db.save(self.manager.tasks_list)
