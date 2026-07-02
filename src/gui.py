@@ -144,18 +144,25 @@ class TodoApp:
     def open_edit_popup(self, task):
         popup = ctk.CTkToplevel(self.root)
         popup.title("Edit Tasks")
-        popup.geometry("300x150")
+        popup.geometry("300x320")
         popup.resizable(False, False)
         popup.grab_set()  # this is for user can not close the main window
 
-        ctk.CTkLabel(popup, text="New Task Name...").pack(pady=10)
-        entry = ctk.CTkEntry(popup, width=200)
-        entry.insert(0, task["task"])  # displaying the current task name
-        entry.pack(pady=5)
+        ctk.CTkLabel(popup, text="New Task Name...").pack(pady=(10, 2))
+        name_entry = ctk.CTkEntry(popup, width=200)
+        name_entry.insert(0, task["task"])  # displaying the current task name
+        name_entry.pack(pady=5)
+
+        ctk.CTkLabel(popup, text="New streak Number...").pack(pady=(10, 2))
+        streak_entry = ctk.CTkEntry(popup, width=200)
+        streak_entry.insert(0, str(task["streak"]))
+        streak_entry.pack(pady=5)
 
         def save():
-            new_name = entry.get()
-            result = self.manager.edit_tasks(task, new_name)
+            new_name = name_entry.get()
+            new_streak_number = streak_entry.get()
+
+            result = self.manager.edit_tasks(task, new_name, new_streak_number)
             self.show_message(result["message"])
             if result["success"]:
                 self.db.save(self.manager.tasks_list)
