@@ -144,9 +144,8 @@ class TodoApp:
     def open_edit_popup(self, task):
         popup = ctk.CTkToplevel(self.root)
         popup.title("Edit Tasks")
-        popup.geometry("300x240")
+        popup.geometry("300x330")
         popup.resizable(False, False)
-        popup.grab_set()  # this is for user can not close the main window
 
         ctk.CTkLabel(popup, text="New Task Name...").pack(pady=(10, 2))
         name_entry = ctk.CTkEntry(popup, width=200)
@@ -178,6 +177,7 @@ class TodoApp:
             popup.destroy()
 
         ctk.CTkButton(popup, text="Save", command=save).pack(pady=10)
+        popup.grab_set()  # this is for user can not close the main window
 
     def remove(self, task):
         result = self.manager.remove_task(task)

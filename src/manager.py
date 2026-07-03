@@ -151,6 +151,7 @@ class Manager:
                     "message": "Longest streak must be a valid number!",
                 }
 
+        return {"success": True, "message": "Task updated successfully!"}
 
     def remove_task(self, selected_task):
         """
