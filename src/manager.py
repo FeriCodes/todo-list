@@ -151,14 +151,6 @@ class Manager:
                     "message": "Longest streak must be a valid number!",
                 }
 
-        if new_done_today is not None:
-            selected_task["done_today"] = bool(new_done_today)
-
-        return {
-            "success": True,
-            "status": "success",
-            "message": "✅ Task properties updated successfully!",
-        }
 
     def remove_task(self, selected_task):
         """
