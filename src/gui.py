@@ -70,9 +70,10 @@ class TodoApp:
                 border_color=DARK_THEME["border"],
             )
             card.pack(fill="x", padx=20, pady=10)
+            card.grid_columnconfigure(0, weight=1)
 
             text_frame = ctk.CTkFrame(card, fg_color="transparent")
-            text_frame.pack(side="right", padx=10)
+            text_frame.grid(row=0, column=1, padx=10)
 
             label_name = ctk.CTkLabel(
                 card,
@@ -81,7 +82,7 @@ class TodoApp:
                 text_color=DARK_THEME["text"],
                 anchor="w",
             )
-            label_name.pack(side="left", padx=20, pady=15)
+            label_name.grid(row=0, column=0, padx=20, pady=15, sticky="w")
 
             streak_label = ctk.CTkLabel(
                 text_frame,
@@ -109,7 +110,7 @@ class TodoApp:
                 border_color=DARK_THEME["border"],
                 command=lambda t=items: self.mark_done(t),
             )
-            done_btn.pack(side="right", padx=5)
+            done_btn.grid(row=0, column=4, padx=5)
 
             remove_btn = ctk.CTkButton(
                 card,
@@ -122,7 +123,7 @@ class TodoApp:
                 border_color=DARK_THEME["border"],
                 command=lambda t=items: self.remove(t),
             )
-            remove_btn.pack(side="right", padx=5)
+            remove_btn.grid(row=0, column=3, padx=5)
 
             edit_btn = ctk.CTkButton(
                 card,
@@ -135,7 +136,7 @@ class TodoApp:
                 border_color=DARK_THEME["border"],
                 command=lambda t=items: self.open_edit_popup(t),
             )
-            edit_btn.pack(side="right", padx=5)
+            edit_btn.grid(row=0, column=2, padx=5)
 
     def add(self):
         task_name = self.entry_box.get()
