@@ -1,0 +1,18 @@
+DARK_THEME = {
+    "bg": "#0f1419",
+    "card": "#1e293b",
+    "accent": "#00d4ff",
+    "success": "#10b981",
+    "danger": "#ef4444",
+    "text": "#f8fafc",
+    "edit": "#fbbf24",
+    "add": "#006DEA",
+    "gold": "#f0c14b",
+    "border": "#0096ff",
+    "font": "Segoe UI",
+    "done": "#15803d",
+    "done_hover": "#166534",
+    "add_hover": "#2379fa",
+    "danger_hover": "#ff8080",
+    "edit_hover": "#f59e0b",
+}
