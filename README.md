@@ -1,69 +1,86 @@
-# Personal Todo List and Habit Tracker
+# 🎯 Habit Tracker
 
-A command-line application to manage daily tasks and build long-term habits using streak tracking. Built with Python using modular architecture and object-oriented design.
+A modern desktop application to manage daily habits and build long-term streaks. Built with **Python** and **customtkinter**.
 
-## 🎯 Project Purpose
-
-This is a **personal learning project** where I practice:
-- Modular code architecture
-- Object-Oriented Programming (OOP)
-- Separation of concerns
-- Clean code principles
-- Project organization
-- Error handling and validation
+---
 
 ## ✨ Features
 
-### ✅ Implemented
-- **Add Task:** Create new tasks and habits, saved to JSON
-- **Mark Task Done:** Update task status and maintain streaks
-- **View Streaks:** Track current and longest streaks for each habit
-- **Remove Task:** Delete tasks from your list
-- **Edit Tasks:** Modify task names, streaks, and status
-- **View All Tasks:** Display all tasks with their status and streak info
+- **Add Tasks** - Create habits with validation (no duplicates or empty names)
+- **Mark Done** - Increment streak and track personal records
+- **Edit Tasks** - Modify task names, streaks, and best records
+- **Delete Tasks** - Remove habits from your list
+- **Dark Theme UI** - Modern, eye-friendly interface with color-coded buttons
+- **Real-time Feedback** - Instant notifications for all actions
+- **JSON Storage** - Persistent data that auto-saves
 
-### 🚧 In Progress
-- Error handling and input validation
-- OOP refactoring with classes
+---
 
-### 📋 Planned (Long-term)
+## 📋 Planned (Long-term)
 - Visual calendar view for tasks
-- GUI with customtkinter
 - Enhanced color-coded status display
 - Backup and restore functionality
 - Data export (CSV, PDF)
 
+---
+
 ## 📸 Screenshots
 
-![App Environment](images/terminal-interface.png)
+![App Environment](images/Habit-Tracker.png)
+
+---
+
+## What I Learned
+
+Building this project from a single CLI file to a full GUI application taught me:
+
+
+- Python project structure and modular design
+- Object-Oriented Programming (classes, methods, separation of concerns)
+- File operations and JSON handling
+- Error handling and input validation
+- GUI development with customtkinter (layout, events, popups)
+- Git workflow (branches, commits, merging, tagging)
+
+## 🛠️ Installation
+
+```bash
+pip install customtkinter
+python main.py
+```
+
+---
+
+## 🏗️ Project Structure
 
 ### What Each Module Does
 
-- **`main.py`:** Application entry point, handles main loop and menu routing
-- **`database.py`:** Handles all JSON file operations (loading and saving tasks)
-- **`ui.py`:** Displays menus, task lists, and streak information
-- **`manager.py`:** Contains all task operations (add, edit, remove, mark done, etc.)
-- **`models.py`:** Data models and class definitions (planned for OOP refactoring)
+- **`main.py`** - Application entry point, initializes the app
+- **`database.py`** - Handles all JSON file operations (loading and saving tasks)
+- **`manager.py`** - Contains all task operations (add, edit, remove, mark done, etc.)
+- **`gui.py`** - Handles UI components and user interactions with customtkinter
+- **`theme.py`** - Stores all GUI theme colors and styling
 
+---
 
-## 🛠️ How to Run
+## 🚀 Quick Start
 
 ```bash
 python main.py
 ```
 
+### How to Use
+1. Type habit name → Click blue "➕" button
+2. Click green "✔️" to mark done (streak increments)
+3. Click yellow "✏️" to edit task
+4. Click red "❌" to delete task
 
-## 📖 Skills Being Developed
+---
 
-Through this project, I'm learning:
-- Python project structure and organization
-- Modular design and code organization
-- File operations and JSON handling
-- Error handling and exception management
-- Object-Oriented Programming principles
-- GUI development with customtkinter (future)
-- Clean code and best practices
-- Git and version control
+## 🎨 UI Colors
 
+- 🟢 **Green** - Mark task done
+- 🟡 **Yellow** - Edit task
+- 🔴 **Red** - Delete task
+- 🔵 **Blue** - Add new task
 
-**Made with ❤️ while learning Python development**
