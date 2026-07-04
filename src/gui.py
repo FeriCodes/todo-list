@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from src.theme import DARK_THEME
 
 
 class TodoApp:
@@ -8,6 +9,7 @@ class TodoApp:
         self.manager = manager
         self.root.title("Habit Tracker")
         self.root.geometry("550x600")
+        self.root.configure(fg_color=DARK_THEME["bg"])
         self.root.resizable(False, False)
 
         add_frame = ctk.CTkFrame(self.root, fg_color="transparent")
@@ -16,18 +18,21 @@ class TodoApp:
         self.entry_box = ctk.CTkEntry(
             add_frame,
             placeholder_text="Add a new task...",
+            border_color=DARK_THEME["border"],
+            border_width=1,
             height=35,
             corner_radius=8,
             width=150,
         )
         self.add_btn = ctk.CTkButton(
             add_frame,
-            text="+",
+            text="➕",
             width=30,
             height=30,
-            fg_color="#3a3a3a",
-            hover_color="#006DEA",
-            border_color="white",
+            fg_color=DARK_THEME["add"],
+            hover_color=DARK_THEME["add_hover"],
+            text_color=DARK_THEME["text"],
+            border_color=DARK_THEME["border"],
             border_width=1,
             command=self.add,
         )
@@ -37,13 +42,14 @@ class TodoApp:
         # scrolling between the tasks
         self.scroll_frame = ctk.CTkScrollableFrame(self.root)
         self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
-
-        self.root.configure(fg_color="#1a1a1a")
-        self.scroll_frame.configure(fg_color="#1a1a1a")
+        self.scroll_frame.configure(fg_color=DARK_THEME["bg"])
 
         # handling the messages
         self.message_label = ctk.CTkLabel(
-            self.root, text="", font=("Segoe UI", 14), text_color="#4a7c59"
+            self.root,
+            text="",
+            font=(DARK_THEME["font"], 14),
+            text_color=DARK_THEME["accent"],
         )
         self.message_label.pack(pady=5)
 
@@ -59,9 +65,9 @@ class TodoApp:
             card = ctk.CTkFrame(
                 self.scroll_frame,
                 corner_radius=10,
-                fg_color="#2b2b2b",
+                fg_color=DARK_THEME["card"],
                 border_width=1,
-                border_color="white",
+                border_color=DARK_THEME["border"],
             )
             card.pack(fill="x", padx=20, pady=10)
 
@@ -69,54 +75,64 @@ class TodoApp:
             text_frame.pack(side="right", padx=10)
 
             label_name = ctk.CTkLabel(
-                card, text=items["task"], font=("Segoe UI", 16), anchor="w"
+                card,
+                text=items["task"],
+                font=(DARK_THEME["font"], 16),
+                text_color=DARK_THEME["text"],
+                anchor="w",
             )
             label_name.pack(side="left", padx=20, pady=15)
 
             streak_label = ctk.CTkLabel(
-                text_frame, text=f"streak: {items['streak']}", font=("Segoe UI", 15)
+                text_frame,
+                text=f"streak: {items['streak']}",
+                font=(DARK_THEME["font"], 15),
             )
             streak_label.pack(anchor="e")
 
             best_streak_label = ctk.CTkLabel(
                 text_frame,
-                text=f"best streak: {items['longest_streak']}",
-                font=("segoe UI", 13),
-                text_color="#f0c14b",
+                text=f"Best: {items['longest_streak']}",
+                font=(DARK_THEME["font"], 13),
+                text_color=DARK_THEME["gold"],
             )
             best_streak_label.pack(anchor="e")
 
             done_btn = ctk.CTkButton(
                 card,
-                text="✓",
+                text="✔️",
                 width=30,
                 height=30,
-                fg_color="#3a3a3a",
-                hover_color="#4a7c59",
+                fg_color=DARK_THEME["done"],
+                hover_color=DARK_THEME["success"],
                 border_width=1,
-                border_color="white",
+                border_color=DARK_THEME["border"],
                 command=lambda t=items: self.mark_done(t),
             )
             done_btn.pack(side="right", padx=5)
 
             remove_btn = ctk.CTkButton(
                 card,
-                text="🗑",
+                text="❌",
                 width=30,
                 height=30,
-                fg_color="#3a3a3a",
-                hover_color="#a83232",
+                fg_color=DARK_THEME["danger"],
+                hover_color=DARK_THEME["danger_hover"],
+                border_width=1,
+                border_color=DARK_THEME["border"],
                 command=lambda t=items: self.remove(t),
             )
             remove_btn.pack(side="right", padx=5)
 
             edit_btn = ctk.CTkButton(
                 card,
-                text="Edit",
+                text="✏️",
                 width=30,
                 height=30,
-                fg_color="#3a3a3a",
-                hover_color="#b5860d",
+                fg_color=DARK_THEME["edit"],
+                hover_color=DARK_THEME["edit_hover"],
+                border_width=1,
+                border_color=DARK_THEME["border"],
                 command=lambda t=items: self.open_edit_popup(t),
             )
             edit_btn.pack(side="right", padx=5)
@@ -146,6 +162,7 @@ class TodoApp:
         popup.title("Edit Tasks")
         popup.geometry("300x330")
         popup.resizable(False, False)
+        popup.configure(fg_color=DARK_THEME["bg"])
 
         ctk.CTkLabel(popup, text="New Task Name...").pack(pady=(10, 2))
         name_entry = ctk.CTkEntry(popup, width=200)
@@ -190,4 +207,4 @@ class TodoApp:
 
     def show_message(self, text):
         self.message_label.configure(text=text)
-        self.root.after(2000, lambda: self.message_label.configure(text=""))
+        self.root.after(3000, lambda: self.message_label.configure(text=""))
