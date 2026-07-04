@@ -75,12 +75,5 @@ python main.py
 3. Click yellow "✏️" to edit task
 4. Click red "❌" to delete task
 
----
 
-## 🎨 UI Colors
-
-- 🟢 **Green** - Mark task done
-- 🟡 **Yellow** - Edit task
-- 🔴 **Red** - Delete task
-- 🔵 **Blue** - Add new task
 
