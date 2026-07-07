@@ -1,3 +1,20 @@
+# Byte-compiled / optimized / DLL support
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# PyInstaller / Executable builds
+build/
+dist/
+*.manifest
+*.spec
+
+# Local Database / User Data
 tasks.json
+
+# IDEs and System Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
