@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+icon.ico
 
 # PyInstaller / Executable builds
 build/
