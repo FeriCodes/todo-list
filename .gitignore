@@ -19,3 +19,4 @@ tasks.json
 .idea/
 .DS_Store
 Thumbs.db
+.venv/
