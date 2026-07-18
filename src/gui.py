@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from tkinter import messagebox
 from src.theme import DARK_THEME
 
 
@@ -198,13 +199,15 @@ class TodoApp:
         popup.grab_set()  # this is for user can not close the main window
 
     def remove(self, task):
-        result = self.manager.remove_task(task)
+        confirm = messagebox.askyesno(title="Confirm Delete", message="Are you sure?")
+        if confirm:
+            result = self.manager.remove_task(task)
 
-        if result["success"]:
-            self.db.save(self.manager.tasks_list)
+            if result["success"]:
+                self.db.save(self.manager.tasks_list)
 
-        self.show_message(result["message"])
-        self.refresh_list()
+            self.show_message(result["message"])
+            self.refresh_list()
 
     def show_message(self, text):
         self.message_label.configure(text=text)
