@@ -40,6 +40,9 @@ class TodoApp:
         self.add_btn.pack(side="right")
         self.entry_box.pack(side="right", padx=(0, 5))
 
+        # Bind Enter key to the add function when inside entry box
+        self.entry_box.bind("<Return>", lambda event: self.add())
+
         self.scroll_frame = ctk.CTkScrollableFrame(self.root)
         self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
         self.scroll_frame.configure(fg_color=DARK_THEME["bg"])
@@ -178,7 +181,7 @@ class TodoApp:
         )
         self.context_menu.post(event.x_root, event.y_root)
 
-    def add(self):
+    def add(self, event=None):
         task_name = self.entry_box.get()
         result = self.manager.new_task(task_name)
         if result["success"]:
