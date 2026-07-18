@@ -23,9 +23,9 @@ class Manager:
             if days_passed == 0:
                 continue
             if days_passed == 1:
-                item["done_today"] = False
+                item["done_today"] = "⏳ Pending"
             elif days_passed >= 2:
-                item["done_today"] = False
+                item["done_today"] = "💔 Streak Broken"
                 item["streak"] = 0
 
     def validate_task_name(self, name_to_check, current_name=None):
@@ -86,14 +86,14 @@ class Manager:
         Marks a task as completed for today and updates its streak.
         """
 
-        if selected_task["done_today"]:
+        if selected_task["done_today"] == "✅ Done":
             return {
                 "success": False,
                 "message": "Already completed today!",
             }
 
         selected_task["streak"] += 1
-        selected_task["done_today"] = True
+        selected_task["done_today"] = "✅ Done"
         selected_task["last_updated"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         message = (

@@ -23,7 +23,7 @@ class Task:
     def __init__(self, activity_name):
         self.task = activity_name
         self.streak = 0
-        self.done_today = False
+        self.done_today = "⏳ Pending"
         self.last_updated = ""
         self.longest_streak = 0
 
