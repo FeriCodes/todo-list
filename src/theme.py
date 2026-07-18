@@ -15,4 +15,8 @@ DARK_THEME = {
     "add_hover": "#2379fa",
     "danger_hover": "#ff8080",
     "edit_hover": "#f59e0b",
+    "menu_bg": "#1e293b",
+    "menu_fg": "#f8fafc",
+    "menu_active_bg": "#006DEA",
+    "menu_active_fg": "#ffffff",
 }

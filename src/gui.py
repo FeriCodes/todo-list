@@ -1,5 +1,5 @@
+from tkinter import messagebox, Menu
 import customtkinter as ctk
-from tkinter import messagebox
 from src.theme import DARK_THEME
 
 
@@ -54,6 +54,19 @@ class TodoApp:
         )
         self.message_label.pack(pady=5)
 
+        self.context_menu = Menu(
+            self.root,
+            tearoff=0,
+            bg=DARK_THEME["menu_bg"],
+            fg=DARK_THEME["menu_fg"],
+            activebackground=DARK_THEME["menu_active_bg"],
+            activeforeground=DARK_THEME["menu_active_fg"],
+            font=(DARK_THEME["font"], 11),
+            bd=1,
+            relief="flat",
+        )
+        self.selected_task_for_menu = None
+
         self.refresh_list()
 
     def refresh_list(self):
@@ -85,6 +98,22 @@ class TodoApp:
             )
             label_name.grid(row=0, column=0, padx=20, pady=15, sticky="w")
 
+            # Bind right-click to the card frame
+            card.bind(
+                "<Button-3>", lambda event, t=items: self.show_context_menu(event, t)
+            )
+            card.bind(
+                "<Button-2>", lambda event, t=items: self.show_context_menu(event, t)
+            )
+
+            # Bind right-click to the task name label too
+            label_name.bind(
+                "<Button-3>", lambda event, t=items: self.show_context_menu(event, t)
+            )
+            label_name.bind(
+                "<Button-2>", lambda event, t=items: self.show_context_menu(event, t)
+            )
+
             streak_label = ctk.CTkLabel(
                 text_frame,
                 text=f"streak: {items['streak']}",
@@ -113,31 +142,25 @@ class TodoApp:
             )
             done_btn.grid(row=0, column=4, padx=5)
 
-            remove_btn = ctk.CTkButton(
-                card,
-                text="❌",
-                width=30,
-                height=30,
-                fg_color=DARK_THEME["danger"],
-                hover_color=DARK_THEME["danger_hover"],
-                border_width=1,
-                border_color=DARK_THEME["border"],
-                command=lambda t=items: self.remove(t),
-            )
-            remove_btn.grid(row=0, column=3, padx=5)
+    def show_context_menu(self, event, task):
+        self.selected_task_for_menu = task
+        self.context_menu.delete(0, "end")
 
-            edit_btn = ctk.CTkButton(
-                card,
-                text="✏️",
-                width=30,
-                height=30,
-                fg_color=DARK_THEME["edit"],
-                hover_color=DARK_THEME["edit_hover"],
-                border_width=1,
-                border_color=DARK_THEME["border"],
-                command=lambda t=items: self.open_edit_popup(t),
-            )
-            edit_btn.grid(row=0, column=2, padx=5)
+        self.context_menu.add_command(
+            label="  Edit Task",
+            foreground=DARK_THEME["edit"],
+            command=lambda: self.open_edit_popup(task),
+        )
+        self.context_menu.add_separator()
+
+        self.context_menu.add_command(
+            label="  Delete Task",
+            foreground=DARK_THEME["danger"],
+            command=self.confirm_and_remove,
+        )
+
+        self.context_menu.configure(bd=0)
+        self.context_menu.post(event.x_root, event.y_root)
 
     def add(self):
         task_name = self.entry_box.get()
@@ -198,16 +221,24 @@ class TodoApp:
         ctk.CTkButton(popup, text="Save", command=save).pack(pady=10)
         popup.grab_set()  # this is for user can not close the main window
 
+    def confirm_and_remove(self):
+        if self.selected_task_for_menu:
+            task = self.selected_task_for_menu
+            confirm = messagebox.askyesno(
+                title="Confirm Delete",
+                message=f"Are you sure you want to delete '{task['task']}' ?",
+            )
+            if confirm:
+                self.remove(task)
+
     def remove(self, task):
-        confirm = messagebox.askyesno(title="Confirm Delete", message="Are you sure?")
-        if confirm:
-            result = self.manager.remove_task(task)
+        result = self.manager.remove_task(task)
 
-            if result["success"]:
-                self.db.save(self.manager.tasks_list)
+        if result["success"]:
+            self.db.save(self.manager.tasks_list)
 
-            self.show_message(result["message"])
-            self.refresh_list()
+        self.show_message(result["message"])
+        self.refresh_list()
 
     def show_message(self, text):
         self.message_label.configure(text=text)
