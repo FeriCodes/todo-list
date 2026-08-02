@@ -1,5 +1,6 @@
 from src.database import Task
 from datetime import datetime
+from src.theme import DARK_THEME
 
 
 class Manager:
@@ -37,6 +38,18 @@ class Manager:
                 else:
                     item["done_today"] = "💔 Streak Broken"
                     item["streak"] = 0
+
+    def get_task_status_info(self, done_today):
+        "Determines UI label text, color, and completion state based on task status."
+
+        if done_today == "✅ Done":
+            return "✅ Done", DARK_THEME["done"], True
+        elif done_today == "💔 Streak Broken":
+            return "💔 Broken", DARK_THEME["danger"], False
+        elif done_today == "❄️ Frozen":
+            return "❄️ Frozen", DARK_THEME["frozen"], False
+        else:
+            return "⏳ Pending", DARK_THEME["accent"], False
 
     def validate_task_name(self, name_to_check, current_name=None):
         perfect_name = name_to_check.strip()
