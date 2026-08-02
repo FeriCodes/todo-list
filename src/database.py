@@ -6,6 +6,7 @@ It contains two main classes: Task and Database.
 
 import json
 import os
+from datetime import datetime
 
 
 class Task:
@@ -26,6 +27,8 @@ class Task:
         self.done_today = "⏳ Pending"
         self.last_updated = ""
         self.longest_streak = 0
+        self.freezes_left = 3
+        self.last_freeze_reset = datetime.now().strftime("%Y-%m")
 
     def to_dict(self):
         return {
@@ -34,6 +37,8 @@ class Task:
             "done_today": self.done_today,
             "last_updated": self.last_updated,
             "longest_streak": self.longest_streak,
+            "freezes_left": self.freezes_left,
+            "last_freeze_reset": self.last_freeze_reset,
         }
 
 

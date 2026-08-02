@@ -11,11 +11,16 @@ class Manager:
         Checks the elapsed time and automatically updates task completion statuses and streaks.
         """
         now = datetime.now()
+        current_month_str = datetime.strftime(now, "%Y-%m")
 
         for item in self.tasks_list:
+            if item.get("last_freeze_reset", "") != current_month_str:
+                item["freezes_left"] = 3
+                item["last_freeze_reset"] = current_month_str
 
             if item["last_updated"] == "":
                 continue
+
             last_time = datetime.strptime(item["last_updated"], "%Y-%m-%d %H:%M:%S")
 
             days_passed = (now.date() - last_time.date()).days
@@ -24,9 +29,14 @@ class Manager:
                 continue
             if days_passed == 1:
                 item["done_today"] = "⏳ Pending"
+
             elif days_passed >= 2:
-                item["done_today"] = "💔 Streak Broken"
-                item["streak"] = 0
+                if item.get("freezes_left", 0) > 0:
+                    item["freezes_left"] -= 1
+                    item["done_today"] = "❄️ Frozen"
+                else:
+                    item["done_today"] = "💔 Streak Broken"
+                    item["streak"] = 0
 
     def validate_task_name(self, name_to_check, current_name=None):
         perfect_name = name_to_check.strip()
