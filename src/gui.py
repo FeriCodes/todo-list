@@ -94,6 +94,10 @@ class TodoApp:
                 status_text = "💔 Broken"
                 status_color = DARK_THEME["danger"]
                 is_done = False
+            elif done_today == "❄️ Frozen":
+                status_text = "❄️ Frozen"
+                status_color = DARK_THEME["frozen"]
+                is_done = False
             else:
                 status_text = "⏳ Pending"
                 status_color = DARK_THEME["accent"]
@@ -121,7 +125,7 @@ class TodoApp:
             )
             status_label.pack(side="left")
 
-            # --- streak info (column 1) ---
+            # --- streak & freeze info (column 1) ---
             info_frame = ctk.CTkFrame(card, fg_color="transparent")
             info_frame.grid(row=0, column=1, padx=5, pady=8)
 
@@ -140,6 +144,15 @@ class TodoApp:
                 text_color=DARK_THEME["gold"],
             )
             best_label.pack(anchor="center")
+
+            freezes_left = items.get("freezes_left", 3)
+            freeze_label = ctk.CTkLabel(
+                info_frame,
+                text=f"❄️ {freezes_left}/3",
+                font=(DARK_THEME["font"], 11),
+                text_color=DARK_THEME["frozen"],
+            )
+            freeze_label.pack(anchor="center")
 
             # --- done button (column 2) ---
             done_btn = ctk.CTkButton(

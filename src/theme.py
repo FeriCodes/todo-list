@@ -4,6 +4,7 @@ DARK_THEME = {
     "accent": "#00d4ff",
     "success": "#10b981",
     "danger": "#ef4444",
+    "frozen": "#38bdf8",
     "text": "#f8fafc",
     "edit": "#fbbf24",
     "add": "#006DEA",
