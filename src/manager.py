@@ -10,11 +10,13 @@ class Manager:
     def updated_tasks_by_time(self):
         """
         Checks the elapsed time and automatically updates task completion statuses and streaks.
+        Includes logic to use monthly freezes for missed days.
         """
         now = datetime.now()
-        current_month_str = datetime.strftime(now, "%Y-%m")
+        current_month_str = now.strftime("%Y-%m")
 
         for item in self.tasks_list:
+            # 1. Check and reset freezes if it's a new month
             if item.get("last_freeze_reset", "") != current_month_str:
                 item["freezes_left"] = 3
                 item["last_freeze_reset"] = current_month_str
@@ -23,7 +25,6 @@ class Manager:
                 continue
 
             last_time = datetime.strptime(item["last_updated"], "%Y-%m-%d %H:%M:%S")
-
             days_passed = (now.date() - last_time.date()).days
 
             if days_passed == 0:
@@ -32,12 +33,17 @@ class Manager:
                 item["done_today"] = "⏳ Pending"
 
             elif days_passed >= 2:
-                if item.get("freezes_left", 0) > 0:
-                    item["freezes_left"] -= 1
+                missed_days = days_passed - 1
+
+                current_freezes = item.get("freezes_left", 0)
+                if current_freezes >= missed_days:
+                    item["freezes_left"] -= missed_days
                     item["done_today"] = "❄️ Frozen"
                 else:
+                    # Not enough freezes for the gap
                     item["done_today"] = "💔 Streak Broken"
                     item["streak"] = 0
+                    item["freezes_left"] = 0
 
     def get_task_status_info(self, done_today):
         "Determines UI label text, color, and completion state based on task status."
