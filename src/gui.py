@@ -96,9 +96,6 @@ class TodoApp:
         card.grid_columnconfigure(0, weight=1)
 
         # Fetch status representation from Manager
-        status_text, status_color, is_done = self.manager.get_task_status_info(
-            items["done_today"]
-        )
 
         # --- Task Name & Status (Column 0) ---
         name_frame = ctk.CTkFrame(card, fg_color="transparent")
@@ -113,22 +110,24 @@ class TodoApp:
         )
         label_name.pack(side="left", padx=(0, 10))
 
-        status_label = ctk.CTkLabel(
-            name_frame,
-            text=status_text,
-            font=(DARK_THEME["font"], 11),
-            text_color=status_color,
-            anchor="w",
-        )
-        status_label.pack(side="left")
-
         # --- Streak & Freeze Counters (Column 1) ---
         info_frame = ctk.CTkFrame(card, fg_color="transparent")
         info_frame.grid(row=0, column=1, padx=5, pady=4)
 
+        status = items.get("done_today", "⏳ Pending")
+
+        if status == "✅ Done":
+            streak_icon = "🔥"
+        elif status == "🧊 Frozen":
+            streak_icon = "🧊"
+        elif status == "💔 Streak Broken":
+            streak_icon = "💔"
+        else:
+            streak_icon = "⏳"
+
         streak_label = ctk.CTkLabel(
             info_frame,
-            text=f"🔥 {items['streak']}",
+            text=f"{streak_icon} {items['streak']}",
             font=(DARK_THEME["font"], 14),
             text_color=DARK_THEME["text"],
         )
@@ -145,13 +144,15 @@ class TodoApp:
         freezes_left = items.get("freezes_left", 3)
         freeze_label = ctk.CTkLabel(
             info_frame,
-            text=f"❄️ {freezes_left}/3",
-            font=(DARK_THEME["font"], 10),
+            text=f"🧊 {freezes_left}/3",
+            font=(DARK_THEME["font"], 13),
             text_color=DARK_THEME["frozen"],
         )
         freeze_label.pack(anchor="center")
 
         # --- Task Completion Button (Column 2) ---
+        is_done = items.get("done_today") == "✅ Done"
+
         done_btn = ctk.CTkButton(
             card,
             text="✔️",
@@ -170,7 +171,6 @@ class TodoApp:
         for widget in (
             card,
             label_name,
-            status_label,
             name_frame,
             streak_label,
             best_label,
